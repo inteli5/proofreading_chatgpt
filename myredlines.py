@@ -1,5 +1,5 @@
 """
-The Redlines calss is from https://github.com/houfu/redlines with small modification to solve a bug. 
+The Redlines class is from https://github.com/houfu/redlines with small modification to solve a bug.
 """
 from __future__ import annotations
 
