@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Proofreading</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h3, h2 {
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+<script>
+    /**
+     * Submit the input text to the server for proofreading and display the corrected text and difference.
+     */
+    async function submitText() {
+        // Get the input elements and their values
+        const paragraphInput = document.getElementById('paragraph-input');
+        const correctedTextDisplay = document.getElementById('corrected-text');
+        const diffTextDisplay = document.getElementById('diff');
+        const paragraph = paragraphInput.value;
+
+        // Check if the input text is not empty
+        if (paragraph) {
+            try {
+                // Send a POST request to the server with the input text
+                const response = await fetch('/proofread', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({text: paragraph})
+                });
+
+                // Check if the server response is ok
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    const correctedText = jsonResponse.corrected_text;
+                    const diff = jsonResponse.diff;
+
+                    // Convert the Markdown difference to HTML using the Showdown library
+                    const converter = new showdown.Converter();
+                    const diffHtml = converter.makeHtml(diff);
+
+                    // Display the corrected text and the difference
+                    correctedTextDisplay.innerText = correctedText;
+                    diffTextDisplay.innerHTML = diffHtml;
+                } else {
+                    correctedTextDisplay.innerText = 'Error: Could not get corrected text.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                correctedTextDisplay.innerText = 'Error: Could not get corrected text.';
+            }
+        }
+    }
+
+    /**
+     * Copy the corrected text to the clipboard.
+     */
+    function copyToClipboard() {
+        // Get the corrected text element and its content
+        const correctedText = document.getElementById('corrected-text');
+
+        // Create a textarea, add the corrected text to it, and copy the content to the clipboard
+        const textArea = document.createElement('textarea');
+        textArea.value = correctedText.innerText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+</script>
+</head>
+<body>
+    <div class="container">
+        <h2>Text Proofreading</h2>
+        <form onsubmit="event.preventDefault(); submitText();">
+            <label for="paragraph-input">Enter your paragraph:</label><br>
+            <textarea id="paragraph-input" rows="15" cols="150"></textarea><br>
+            <button type="submit">Submit</button>
+        </form>
+        <div>
+            <h3>Difference:</h3>
+            <p id="diff"></p>
+            <h3>Corrected Text:</h3>
+            <p id="corrected-text"></p>
+            <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        </div>
+    </div>
+</body>
+</html>
