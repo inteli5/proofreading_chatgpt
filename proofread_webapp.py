@@ -17,10 +17,9 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
-        temperature=0, # this is the degree of randomness of the model's output
+        temperature=0,  # this is the degree of randomness of the model's output
     )
     return response.choices[0].message["content"]
-
 
 
 # Create FastAPI app and Jinja2 templates
@@ -31,10 +30,10 @@ templates = Jinja2Templates(directory="templates")
 class OriginalText(BaseModel):
     text: str
 
+
 class CorrectedText(BaseModel):
     corrected_text: str
     diff: str
-
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -44,19 +43,17 @@ def home(request: Request):
 
 @app.post("/proofread")
 async def proof(original_text: OriginalText) -> CorrectedText:
-
-    openai.api_key  = os.getenv('OPENAI_API_KEY')
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     original_text = original_text.text
     prompt = f"""Proofread and correct the following text
     and rewrite the corrected version. Only output the corrected version. Do not add any other words.
     ```{original_text}```"""
     response = get_completion(prompt)
 
-    diff = MyRedlines(original_text,response)
+    diff = MyRedlines(original_text, response)
 
-    response_dict= {"corrected_text": response,"diff": diff.output_markdown}
+    response_dict = {"corrected_text": response, "diff": diff.output_markdown}
     return CorrectedText(**response_dict)
-
 
 
 if __name__ == "__main__":

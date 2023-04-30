@@ -62,9 +62,12 @@ class MyRedlines:
         Similar to `SequenceMatcher.get_opcodes`
         """
         if self._seq2 is None:
-            raise ValueError('No test string was provided when the function was called, or during initialisation.')
+            raise ValueError(
+                "No test string was provided when the function was called, or during initialisation."
+            )
 
         from difflib import SequenceMatcher
+
         matcher = SequenceMatcher(None, self._seq1, self._seq2)
         return matcher.get_opcodes()
 
@@ -72,33 +75,42 @@ class MyRedlines:
     def output_markdown(self) -> str:
         """Returns the delta in markdown format."""
         result = []
-        style = 'red'
+        style = "red"
 
-        if self.options.get('markdown_style'):
-            style = self.options['markdown_style']
+        if self.options.get("markdown_style"):
+            style = self.options["markdown_style"]
 
-        if style == 'none':
-            md_styles = {"ins": ('ins', 'ins'), "del": ('del', 'del')}
-        elif 'red':
-            md_styles = {"ins": ('span style="color:red;font-weight:700;"', 'span'),
-                         "del": ('span style="color:red;font-weight:700;text-decoration:line-through;"', 'span')}
+        if style == "none":
+            md_styles = {"ins": ("ins", "ins"), "del": ("del", "del")}
+        elif "red":
+            md_styles = {
+                "ins": ('span style="color:red;font-weight:700;"', "span"),
+                "del": (
+                    'span style="color:red;font-weight:700;text-decoration:line-through;"',
+                    "span",
+                ),
+            }
 
         for tag, i1, i2, j1, j2 in self.opcodes:
-            if tag == 'equal':
+            if tag == "equal":
                 result.append("".join(self._seq1[i1:i2]))
-            elif tag == 'insert':
-                result.append(f"<{md_styles['ins'][0]}>{''.join(self._seq2[j1:j2])}</{md_styles['ins'][1]}>")
-            elif tag == 'delete':
-                result.append(f"<{md_styles['del'][0]}>{''.join(self._seq1[i1:i2])}</{md_styles['del'][1]}>")
-            elif tag == 'replace':
+            elif tag == "insert":
+                result.append(
+                    f"<{md_styles['ins'][0]}>{''.join(self._seq2[j1:j2])}</{md_styles['ins'][1]}>"
+                )
+            elif tag == "delete":
                 result.append(
                     f"<{md_styles['del'][0]}>{''.join(self._seq1[i1:i2])}</{md_styles['del'][1]}>"
-                    f"<{md_styles['ins'][0]}>{''.join(self._seq2[j1:j2])}</{md_styles['ins'][1]}>")
+                )
+            elif tag == "replace":
+                result.append(
+                    f"<{md_styles['del'][0]}>{''.join(self._seq1[i1:i2])}</{md_styles['del'][1]}>"
+                    f"<{md_styles['ins'][0]}>{''.join(self._seq2[j1:j2])}</{md_styles['ins'][1]}>"
+                )
 
         return "".join(result)
 
     def compare(self, test: str | None = None, output: str = "markdown", **options):
-
         """
         Compare `test` with `source`, and produce a delta in a format specified by `output`.
 
@@ -112,10 +124,12 @@ class MyRedlines:
             else:
                 self.test = test
         elif self.test is None:
-            raise ValueError('No test string was provided when the function was called, or during initialisation.')
+            raise ValueError(
+                "No test string was provided when the function was called, or during initialisation."
+            )
 
         if options:
             self.options = options
 
-        if output == 'markdown':
+        if output == "markdown":
             return self.output_markdown
