@@ -25,7 +25,7 @@ python -m pip install -r requirements.txt
 ```
 
 Add your OPENAI_API_KEY. 
-You can get a OPENAI_API_KEY by google 'openai api key' and get one from OpenAI's official website. In the root directory of the project, create a .env file with the following contents. 
+You can get a OPENAI_API_KEY by google 'openai api key' and get one from OpenAI's official website. In the root directory of the project, create a file named `.env` with the following contents. 
 ```bash
 OPENAI_API_KEY=your_openai_api_key
 ```
