@@ -48,7 +48,7 @@ async def proof(original_text: OriginalText) -> CorrectedText:
     openai.api_key  = os.getenv('OPENAI_API_KEY')
     original_text = original_text.text
     prompt = f"""Proofread and correct the following text
-    and rewrite the corrected version. 
+    and rewrite the corrected version. Only output the corrected version. Do not add any other words.
     ```{original_text}```"""
     response = get_completion(prompt)
 
