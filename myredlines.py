@@ -22,22 +22,29 @@ class MyRedlines:
     def source(self):
         """
         The source text to be used as a basis for comparison.
-        :return:
         """
         return self._source
 
     @source.setter
     def source(self, value):
+        """
+        Set the source text to be used as a basis for comparison.
+        """
         self._source = value
         self._seq1 = tokenize_text(value)
 
     @property
     def test(self):
-        """The text to be compared with the source."""
+        """
+        The text to be compared with the source.
+        """
         return self._test
 
     @test.setter
     def test(self, value):
+        """
+        Set the text to be compared with the source.
+        """
         self._test = value
         self._seq2 = tokenize_text(value)
 
@@ -73,7 +80,9 @@ class MyRedlines:
 
     @property
     def output_markdown(self) -> str:
-        """Returns the delta in markdown format."""
+        """
+        Returns the delta in markdown format.
+        """
         result = []
         style = "red"
 
