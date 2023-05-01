@@ -5,26 +5,29 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.responses import HTMLResponse
+from retry import retry
 
 import openai
+from openai.error import APIConnectionError
 from myredlines import MyRedlines
 
 # load the openai api key from .env file
 _ = load_dotenv(find_dotenv())
 
 
+@retry(APIConnectionError, tries=3, delay=2, backoff=2)
 def get_completion(prompt, model="gpt-3.5-turbo"):
     """
     Get the completion from OpenAI's ChatGPT model.
-    
+
     Args:
         prompt (str): The prompt to be completed.
         model (str): The model to be used.
-    
+
     Returns:
         str: The completion.
     """
-    
+
     messages = [{"role": "user", "content": prompt}]
     response = openai.ChatCompletion.create(
         model=model,
@@ -32,6 +35,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
         temperature=0,  # this is the degree of randomness of the model's output
     )
     return response.choices[0].message["content"]
+
 
 
 # Create FastAPI app and Jinja2 templates
