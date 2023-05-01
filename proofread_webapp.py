@@ -5,6 +5,8 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
 from retry import retry
 
 import openai
@@ -41,6 +43,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 # Create FastAPI app and Jinja2 templates
 app = FastAPI(title="Proofread from ChatGPT")
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 class OriginalText(BaseModel):

@@ -45,6 +45,18 @@
 
         button:hover {
             background-color: #0056b3;
+
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .submit-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
     </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
@@ -58,10 +70,14 @@
         const correctedTextDisplay = document.getElementById('corrected-text');
         const diffTextDisplay = document.getElementById('diff');
         const paragraph = paragraphInput.value;
+        const waitingGif = document.getElementById('waiting-gif');
 
         // Check if the input text is not empty
         if (paragraph) {
             try {
+                // Show the waiting GIF
+                waitingGif.style.display = 'inline-block';
+
                 // Send a POST request to the server with the input text
                 const response = await fetch('/proofread', {
                     method: 'POST',
@@ -70,6 +86,9 @@
                     },
                     body: JSON.stringify({text: paragraph})
                 });
+
+                // Hide the waiting GIF
+                waitingGif.style.display = 'none';
 
                 // Check if the server response is ok
                 if (response.ok) {
@@ -90,6 +109,9 @@
             } catch (error) {
                 console.error('Error:', error);
                 correctedTextDisplay.innerText = 'Error: Could not get corrected text.';
+            } finally {
+                // Hide the waiting GIF in case of any error
+                waitingGif.style.display = 'none';
             }
         }
     }
@@ -111,13 +133,17 @@
     }
 </script>
 </head>
+
 <body>
     <div class="container">
         <h2>Text Proofreading</h2>
         <form onsubmit="event.preventDefault(); submitText();">
             <label for="paragraph-input">Enter your paragraph:</label><br>
             <textarea id="paragraph-input" rows="15" cols="150"></textarea><br>
-            <button type="submit">Submit</button>
+            <div class="submit-container">
+                <button type="submit">Submit</button>
+                <img src="{{ url_for('static', path='images/wait.gif') }}" id="waiting-gif" alt="Waiting" style="width: 30px; display: none;">
+            </div>
         </form>
         <div>
             <h3>Difference:</h3>
