@@ -9,6 +9,7 @@ from starlette.responses import HTMLResponse
 import openai
 from myredlines import MyRedlines
 
+# load the openai api key from .env file
 _ = load_dotenv(find_dotenv())
 
 
