@@ -13,6 +13,17 @@ _ = load_dotenv(find_dotenv())
 
 
 def get_completion(prompt, model="gpt-3.5-turbo"):
+    """
+    Get the completion from OpenAI's ChatGPT model.
+    
+    Args:
+        prompt (str): The prompt to be completed.
+        model (str): The model to be used.
+    
+    Returns:
+        str: The completion.
+    """
+    
     messages = [{"role": "user", "content": prompt}]
     response = openai.ChatCompletion.create(
         model=model,
@@ -43,6 +54,16 @@ def home(request: Request):
 
 @app.post("/proofread")
 async def proof(original_text: OriginalText) -> CorrectedText:
+    """
+    Proofread the text using ChatGPT and return the corrected text and the difference.
+    
+    Args:
+        original_text (OriginalText): The original text to be proofread.
+        
+    Returns:
+        CorrectedText: The corrected text and the difference.
+    """
+
     openai.api_key = os.getenv("OPENAI_API_KEY")
     original_text = original_text.text
     prompt = f"""Proofread and correct the following text
