@@ -41,6 +41,8 @@ python proofread_webapp.py
 ```
 After that, open a web browser and enter the URL 127.0.0.1:8000.
 
+### Screenshot
+
 ![screenshot](./Screenshot.png)
 
 
