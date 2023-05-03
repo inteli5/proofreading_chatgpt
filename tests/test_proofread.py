@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from proofread_webapp import app, get_completion, OriginalText
+from proofread_webapp import app, get_completion
+from model import OriginalText
 
 client = TestClient(app)
 
