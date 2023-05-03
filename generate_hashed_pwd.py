@@ -7,7 +7,7 @@ def get_password_hash(plain_password: str) -> str:
     return pwd_context.hash(plain_password)
 
 # write your password here.
-plain_password = "a"
+plain_password = input("Enter your plain password: ")
 
 # Hash the password
 hashed_password = get_password_hash(plain_password)

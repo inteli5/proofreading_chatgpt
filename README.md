@@ -41,6 +41,36 @@ python proofread_webapp.py
 ```
 After that, open a web browser and enter the URL 127.0.0.1:8000.
 
+We employed a simple authurization system to limit you openai account's expense if you expose the webapp to the public.
+You can add user and password in the file data.db.
+
+```json
+{
+    "testuser": {
+        "username": "testuser",
+        "password": "$2b$12$7/bfr2VvYrLxBXcBv7Me4eocdtTvHITtISi3qUTP44TxxNljEYR/a" 
+    }
+}
+```
+
+The default username and password are `testuser` and `testpassword`. The password in the JSON file is a hashed password.
+
+The code will only compare the hashed password. To create a hashed password for your plain password, run `generate_hashed_pwd.py` and input your new plain password in the code.
+
+ After that you can modify the data.db as 
+
+ ```json
+{
+    "your_user": {
+        "username": "your_user",
+        "password": "your new hashed password" 
+    }
+}
+```
+
+Make sure you change both the key and the 'username' field to your new username and delete the entry for the 'testuser'.
+
+
 ### Screenshot
 
 ![screenshot](./Screenshot.png)
