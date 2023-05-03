@@ -3,7 +3,7 @@ import os
 from datetime import timedelta, datetime
 from dotenv import load_dotenv, find_dotenv
 
-from fastapi import FastAPI, Depends, Form
+from fastapi import FastAPI, Depends, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from jose import jwt, JWTError
 from passlib.context import CryptContext
@@ -17,7 +17,7 @@ import openai
 from openai.error import APIConnectionError
 
 from model import OriginalText, CorrectedText, User, TokenData
-from myredlines import MyRedlines
+from myredlines import MyRedlines, split_paragraphs
 
 # load the openai api key from .env file
 _ = load_dotenv(find_dotenv())
@@ -156,7 +156,7 @@ async def home(request: Request, current_user: User | str = Depends(get_current_
 
 
 @app.post("/proofread")
-async def proof(original_text: OriginalText) -> CorrectedText:
+async def proof(original_text: OriginalText, current_user: User | str = Depends(get_current_user, use_cache=True)) -> CorrectedText:
     """
     Proofread the text using ChatGPT and return the corrected text and the difference.
     
@@ -167,18 +167,32 @@ async def proof(original_text: OriginalText) -> CorrectedText:
         CorrectedText: The corrected text and the difference.
     """
 
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    original_text = original_text.text
-    prompt = f"""Proofread and correct the following text that delimited in the triple backticks
-    and rewrite the corrected version. Only output the corrected version. Do not add any other words. 
-    Keep the number of paragraphs the same as the original text.
-    ```{original_text}```"""
-    response = get_completion(prompt)
+    if isinstance(current_user, dict) and current_user['username'] in users_db:
 
-    diff = MyRedlines(original_text, response)
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+        original_text = original_text.text
+        result = []
+        paragraphs=split_paragraphs(original_text)
+        for p in paragraphs:
+            result.append(p)
+            result.append('\n\n')
+        
+        # pop the last '\n\n
+        result.pop()
+        original_text = ''.join(result)
 
-    response_dict = {"corrected_text": response, "diff": diff.output_markdown}
-    return CorrectedText(**response_dict)
+        prompt = f"""Proofread and correct the following text 
+        and rewrite the corrected version. Only output the corrected version. Do not add any other words. 
+        Keep the number of paragraphs the same as the original text.
+        ```{original_text}```"""
+        response = get_completion(prompt)
+
+        diff = MyRedlines(original_text, response)
+
+        response_dict = {"corrected_text": response, "diff": diff.output_markdown}
+        return CorrectedText(**response_dict)
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
 
 @app.get("/login", response_class=HTMLResponse)

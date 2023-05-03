@@ -55,7 +55,7 @@ You can add user and password in the file data.db.
 
 The default username and password are `testuser` and `testpassword`. The password in the JSON file is a hashed password.
 
-The code will only compare the hashed password. To create a hashed password for your plain password, run `generate_hashed_pwd.py` and input your new plain password in the code.
+The code will only compare the hashed password. To create a hashed password for your plain password, run `generate_hashed_pwd.py` and input your new plain password in the terminal.
 
  After that you can modify the data.db as 
 
