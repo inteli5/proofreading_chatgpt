@@ -138,8 +138,19 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, current_user: User | str = Depends(get_current_user, use_cache=True)):
+    """
+    Home page. If the user is authenticated, display the home page. Otherwise, redirect to the login page.
+
+    Args:
+        request (Request): The request.
+        current_user (User | str): The current user.
+
+    Returns:
+        templates.TemplateResponse: The home page.
+    """
+
     if isinstance(current_user, dict) and current_user['username'] in users_db:
-        return templates.TemplateResponse("proofread_home.html", {"request": request})
+        return templates.TemplateResponse("proofread_home.html", {"request": request, "username": current_user['username']})
     return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -170,18 +181,38 @@ async def proof(original_text: OriginalText) -> CorrectedText:
     return CorrectedText(**response_dict)
 
 
-
-
-
 @app.get("/login", response_class=HTMLResponse)
 async def login(request: Request, current_user: User | str = Depends(get_current_user)):
+    """
+    Login page. If the user is authenticated, display the protected page. Otherwise, display the login page.
+
+    Args:
+        request (Request): The request.
+        current_user (User | str): The current user.
+
+    Returns:
+        templates.TemplateResponse: The login page.
+    """
     if isinstance(current_user, dict) and current_user['username'] in users_db:
-        return templates.TemplateResponse("protected.html", {"request": request, "username": current_user['username']})
+        return templates.TemplateResponse("proofread_home.html", {"request": request, "username": current_user['username']})
     return templates.TemplateResponse("login.html", {"request": request})
 
 
 @app.post("/login", response_class=HTMLResponse)
 async def login_for_access_token(request: Request, username: str = Form(...), password: str = Form(...)):
+    """
+    Handle the form in /login. If the credentials are valid, create an access token and set a cookie.
+    Otherwise, display an error message on the login page.
+
+    Args:
+        request (Request): The request.
+        username (str): The username.
+        password (str): The password.
+
+    Returns:
+        templates.TemplateResponse: The login page.
+    """
+
     user = authenticate_user(username, password)
     if not user:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
@@ -189,7 +220,7 @@ async def login_for_access_token(request: Request, username: str = Form(...), pa
     access_token = create_access_token(
         data={"username": user["username"], "exp": datetime.utcnow() + access_token_expires}
     )
-    response = templates.TemplateResponse("protected.html", {"request": request, "username": user["username"]})
+    response = templates.TemplateResponse("proofread_home.html", {"request": request, "username": user["username"]})
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     return response
 
