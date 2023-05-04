@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ url_for('static', path='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
     <title>Text Proofreading</title>
     <style>
         body {
@@ -137,14 +137,14 @@
 
 <body>
     <div class="container">
-        <p>Hello, {{ username }}, <a href="/logout">Log Out</a></p>
+        <p>Hello, {{ username }}, <a href="/logout">log out</a></p>
         <h2>Text Proofreading</h2>
         <form onsubmit="event.preventDefault(); submitText();">
             <label for="paragraph-input">Enter your paragraph:</label><br>
             <textarea id="paragraph-input" rows="15" cols="150"></textarea><br>
             <div class="submit-container">
                 <button type="submit">Submit</button>
-                <img src="{{ url_for('static', path='images/wait.gif') }}" id="waiting-gif" alt="Waiting" style="width: 30px; display: none;">
+                <img src="static/images/wait.gif" id="waiting-gif" alt="Waiting" style="width: 30px; display: none;">
             </div>
         </form>
         <div>

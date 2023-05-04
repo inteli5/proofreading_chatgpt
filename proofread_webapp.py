@@ -131,7 +131,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 
 # Create FastAPI app and Jinja2 templates
-app = FastAPI(title="Proofread from ChatGPT")
+app = FastAPI(title="Proofread from ChatGPT", docs_url=None)
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -169,8 +169,13 @@ async def proof(original_text: OriginalText, current_user: User | str = Depends(
 
     if isinstance(current_user, dict) and current_user['username'] in users_db:
 
-        openai.api_key = os.getenv("OPENAI_API_KEY")
         original_text = original_text.text
+        if  len(original_text.strip()) == 0 or len(original_text.strip())>2000:
+            response_dict = {"corrected_text": 'The text is too short or too long. Please try again.', "diff": ''}
+            return CorrectedText(**response_dict)
+
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+        
         result = []
         paragraphs=split_paragraphs(original_text)
         for p in paragraphs:
