@@ -58,7 +58,7 @@ The username and hashed password are in the file `data.db`.
 }
 ```
 
-To add new user and create a hashed password , run `generate_hashed_pwd.py`. Once the new user and plain password is input, the code will update the `data.db` file and delete the default user.
+To add new user and create a hashed password , run `python generate_hashed_pwd.py`. Once the new user and plain password is input, the code will update the `data.db` file and delete the default user.
 
 ### Screenshot
 
