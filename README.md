@@ -30,6 +30,7 @@ You can get a OPENAI_API_KEY by google 'openai api key' and get one from OpenAI'
 OPENAI_API_KEY=your_openai_api_key
 PROOFREAD_SECRET_KEY=your_secret_key
 ```
+`PROOFREAD_SECRET_KEY` is used in the authorization. 
 
 ## Usage
 
