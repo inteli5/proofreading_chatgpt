@@ -2,6 +2,7 @@ import json
 import os
 from datetime import timedelta, datetime
 from dotenv import load_dotenv, find_dotenv
+import time
 
 from fastapi import FastAPI, Depends, Form, HTTPException
 from fastapi.templating import Jinja2Templates
@@ -171,7 +172,7 @@ async def proof(original_text: OriginalText, current_user: User | str = Depends(
 
         original_text = original_text.text
         if  len(original_text.strip()) == 0 or len(original_text.strip())>2000:
-            response_dict = {"corrected_text": 'The text is too short or too long. Please try again.', "diff": ''}
+            response_dict = {"corrected_text": 'The text is too short or too long. Please try again.', "diff": '', 'time_used': '0.01 s'}
             return CorrectedText(**response_dict)
 
         openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -190,11 +191,14 @@ async def proof(original_text: OriginalText, current_user: User | str = Depends(
         and rewrite the corrected version. Only output the corrected version. Do not add any other words. 
         Keep the number of paragraphs the same as the original text.
         ```{original_text}```"""
+        
+        start=time.time()
         response = get_completion(prompt)
+        time_used=time.time()-start
 
         diff = MyRedlines(original_text, response)
 
-        response_dict = {"corrected_text": response, "diff": diff.output_markdown}
+        response_dict = {"corrected_text": response, "diff": diff.output_markdown, 'time_used': f"{time_used:.2f} s"}
         return CorrectedText(**response_dict)
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")

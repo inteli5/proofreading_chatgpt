@@ -8,6 +8,7 @@ class OriginalText(BaseModel):
 class CorrectedText(BaseModel):
     corrected_text: str
     diff: str
+    time_used: str
 
 
 class User(BaseModel):

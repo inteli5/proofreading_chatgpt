@@ -70,6 +70,7 @@
         const paragraphInput = document.getElementById('paragraph-input');
         const correctedTextDisplay = document.getElementById('corrected-text');
         const diffTextDisplay = document.getElementById('diff');
+        const timeUsedDisplay = document.getElementById('time_used');
         const paragraph = paragraphInput.value;
         const waitingGif = document.getElementById('waiting-gif');
 
@@ -96,14 +97,17 @@
                     const jsonResponse = await response.json();
                     const correctedText = jsonResponse.corrected_text;
                     const diff = jsonResponse.diff;
+                    const time_used = jsonResponse.time_used;
 
                     // Convert the Markdown difference to HTML using the Showdown library
                     const converter = new showdown.Converter();
                     const diffHtml = converter.makeHtml(diff);
 
                     // Display the corrected text and the difference
+                    timeUsedDisplay.innerText = time_used
                     correctedTextDisplay.innerText = correctedText;
                     diffTextDisplay.innerHTML = diffHtml;
+
                 } else {
                     correctedTextDisplay.innerText = 'Error: Could not get corrected text.';
                 }
@@ -148,6 +152,7 @@
             </div>
         </form>
         <div>
+            <p>Time used: <span id="time_used"></span></p>
             <h3>Difference:</h3>
             <p id="diff"></p>
             <h3>Corrected Text:</h3>
