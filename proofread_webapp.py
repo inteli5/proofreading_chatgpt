@@ -186,10 +186,10 @@ async def proof(original_text: OriginalText, current_user: User | str = Depends(
         # pop the last '\n\n
         result.pop()
         original_text = ''.join(result)
+        # we add '\n\n' between paragraphs to make the split of paragraphs more obvious to gpt api. 
 
         prompt = f"""Proofread and correct the following text 
         and rewrite the corrected version. Only output the corrected version. Do not add any other words. 
-        Keep the number of paragraphs the same as the original text.
         ```{original_text}```"""
         
         start=time.time()
