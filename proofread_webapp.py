@@ -217,7 +217,7 @@ async def login(request: Request, current_user: User | str = Depends(get_current
         templates.TemplateResponse: The login page.
     """
     if isinstance(current_user, dict) and current_user['username'] in users_db:
-        return templates.TemplateResponse("proofread_home.html", {"request": request, "username": current_user['username']})
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse("login.html", {"request": request})
 
 
@@ -243,7 +243,7 @@ async def login_for_access_token(request: Request, username: str = Form(...), pa
     access_token = create_access_token(
         data={"username": user["username"], "exp": datetime.utcnow() + access_token_expires}
     )
-    response = templates.TemplateResponse("proofread_home.html", {"request": request, "username": user["username"]})
+    response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     return response
 
@@ -255,9 +255,9 @@ async def logout(request: Request):
     return response
 
 
-@app.get("/unauthorized", response_class=HTMLResponse)
-async def unauthorized(request: Request):
-    return templates.TemplateResponse("unauthorized.html", {"request": request})
+# @app.get("/unauthorized", response_class=HTMLResponse)
+# async def unauthorized(request: Request):
+#     return templates.TemplateResponse("unauthorized.html", {"request": request})
 
 
 if __name__ == "__main__":

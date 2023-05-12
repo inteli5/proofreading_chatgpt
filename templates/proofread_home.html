@@ -60,7 +60,7 @@
             gap: 20px;
         }
     </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     /**
      * Submit the input text to the server for proofreading and display the corrected text and difference.
@@ -99,9 +99,8 @@
                     const diff = jsonResponse.diff;
                     const time_used = jsonResponse.time_used;
 
-                    // Convert the Markdown difference to HTML using the Showdown library
-                    const converter = new showdown.Converter();
-                    const diffHtml = converter.makeHtml(diff);
+                    // Convert the Markdown difference to HTML using the marked library
+                    const diffHtml = marked.parse(diff);
 
                     // Display the corrected text and the difference
                     timeUsedDisplay.innerText = time_used
