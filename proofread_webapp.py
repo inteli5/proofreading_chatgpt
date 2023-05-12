@@ -18,7 +18,8 @@ import openai
 from openai.error import APIConnectionError
 
 from model import OriginalText, CorrectedText, User, TokenData
-from myredlines import MyRedlines, split_paragraphs
+from redlines import Redlines
+from redlines.redlines import split_paragraphs
 
 # load the openai api key from .env file
 _ = load_dotenv(find_dotenv())
@@ -196,7 +197,7 @@ async def proof(original_text: OriginalText, current_user: User | str = Depends(
         response = get_completion(prompt)
         time_used=time.time()-start
 
-        diff = MyRedlines(original_text, response)
+        diff = Redlines(original_text, response)
 
         response_dict = {"corrected_text": response, "diff": diff.output_markdown, 'time_used': f"{time_used:.2f} s"}
         return CorrectedText(**response_dict)
